@@ -1,4 +1,5 @@
 from datetime import datetime
+from alert import TelegramBot
 import configparser
 import os
 
@@ -14,6 +15,10 @@ logfilename_dateformat = config["logger_lib"]["logfilename_dateformat"]
 logfile_timeformat = config["logger_lib"]["logfile_timeformat"]
 maxlogfilesize = config["logger_lib"]["maxlogfilesize"]
 
+sendalarmondebug = config["alarm_settings"]["sendalarmondebug"].lower()
+sendalarmonerror = config["alarm_settings"]["sendalarmonerror"].lower()
+sendalarmoncritical = config["alarm_settings"]["sendalarmoncritical"].lower()
+
 startmessage =    '|--------------------------------------|\n' \
                   '|          logger_lib started          |\n' \
                   '|          ' + datetime.today().strftime("%d-%m-%Y %H:%M:%S") +  '         |\n' \
@@ -24,9 +29,11 @@ endmessage =      '\n' \
 
 class Logger():
 
+
     def __init__(self):
         self.indexnumber = 1
         self.indexfilenumber = 0
+
 
     def checkLogfile(self):
         global logfile
@@ -44,16 +51,56 @@ class Logger():
                 return logfile
         return logfile
 
+
     def startLogging(self):
         self.checkLogfile()
         with open(logfile, "a") as f:
             f.write(startmessage)
 
-    def write(self, message):
+
+    def write(self, message, level=None):
         self.checkLogfile()
-        with open(logfile, "a") as f:
-            f.write('[ ' + str('%03d' % (self.indexnumber)) + ' ]  ' + datetime.today().strftime(logfile_timeformat) + '  ' + message + '\n')
-            self.indexnumber += 1
+
+        if level != None:
+
+            if level == "DEBUG":
+                debugmessage = '[ ' + str('%03d' % (self.indexnumber)) + ' ]  ' + datetime.today().strftime(logfile_timeformat) + '  [ DEBUG ]  ' + message + '\n'
+                with open(logfile, "a") as f:
+                    f.write(debugmessage)
+                    self.indexnumber += 1
+
+                if sendalarmondebug == 'yes':
+                    alertbot = TelegramBot()
+                    alertbot.sendAlert(debugmessage)
+
+            if level == "ERROR":
+                errormessage = '[ ' + str('%03d' % (self.indexnumber)) + ' ]  ' + datetime.today().strftime(logfile_timeformat) + '  [ ERROR ]  ' + message + '\n'
+                with open(logfile, "a") as f:
+                    f.write(errormessage)
+                    self.indexnumber += 1
+
+                if sendalarmonerror == 'yes':
+                    alertbot = TelegramBot()
+                    alertbot.sendAlert(errormessage)
+
+            if level == "CRITICAL":
+                criticalmessage = str(len('%03d' % (self.indexnumber)) * ' ') + 16 * ' ' + '|------------|\n' \
+                                  '[ ' + str('%03d' % (self.indexnumber)) + ' ]  ' + datetime.today().strftime(logfile_timeformat) + '  |  CRITICAL  |  ' + message + '\n' \
+                                  + str(len('%03d' % (self.indexnumber)) * ' ') + 16 * ' ' + '|------------|\n'
+                with open(logfile, "a") as f:
+                    f.write(criticalmessage)
+                    self.indexnumber += 1
+
+                if sendalarmoncritical == 'yes':
+                    alertbot = TelegramBot()
+                    alertbot.sendAlert(criticalmessage)
+
+        else:
+
+            with open(logfile, "a") as f:
+                f.write('[ ' + str('%03d' % (self.indexnumber)) + ' ]  ' + datetime.today().strftime(logfile_timeformat) + '  ' + message + '\n')
+                self.indexnumber += 1
+
 
     def __del__(self):
         with open(logfile, "a") as f:
