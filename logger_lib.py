@@ -3,6 +3,7 @@ import os
 import sys
 from datetime import datetime
 
+
 # READ CONFIG FILE
 config = configparser.ConfigParser()
 config.read("logger.cfg")
