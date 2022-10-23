@@ -1,3 +1,7 @@
+# todo:
+# 1. delete config files
+# 2. rewrite library init
+
 import configparser
 import os
 import sys
