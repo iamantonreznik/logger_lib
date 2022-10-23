@@ -29,3 +29,8 @@ mylogger.error('Событие с пометкой ERROR')
 <pre>
 mylogger.crit('Событие с пометкой CRITICAL')
 </pre>
+
+
+# todo:
+1. delete config file
+2. rewrite initialization
