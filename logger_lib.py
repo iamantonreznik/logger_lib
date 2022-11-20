@@ -1,67 +1,77 @@
-import configparser
+# v0.2
+# 19.11.22
+
 import os
 import sys
 from datetime import datetime
 
 
-# READ CONFIG FILE
-config = configparser.ConfigParser()
-config.read("logger.cfg")
+class Logger:
 
-# READ VARIABLES
-logfilefolder = config["logger_lib"]["logfilefolder"]
-logfileprefix = config["logger_lib"]["logfileprefix"]
-logfileextension = config["logger_lib"]["logfileextension"]
-logfilename_dateformat = config["logger_lib"]["logfilename_dateformat"]
-logfile_timeformat = config["logger_lib"]["logfile_timeformat"]
-maxlogfilesize = config["logger_lib"]["maxlogfilesize"]
+    def __init__(self, folder, prefix):
+        self.folder = folder
+        self.prefix = prefix
+        if self.prefix[-1] != "_":
+            self.prefix = self.prefix + "_"
+        self.logfile = os.path.join(self.folder, self.prefix + datetime.today().strftime("%d-%m-%Y") + ".log")
 
-if logfilefolder[-1] != "/":
-    logfilefolder = logfilefolder + "/"
-
-
-class Logger():
-
-    def __init__(self):
-        self.indexfilenumber = 0
-
-    def checklogfile(self):
-        global logfile
-        indexfilenumber = 0
-        logfile = logfilefolder + logfileprefix + datetime.today().strftime(logfilename_dateformat) + '_' + str(indexfilenumber) + logfileextension
-        if os.path.exists(logfile) and int('%2.0f' % (os.path.getsize(logfile) / 1024)) >= int(maxlogfilesize):
-            while os.path.exists(logfile):
-                indexfilenumber += 1
-                logfile = logfilefolder + logfileprefix + datetime.today().strftime(logfilename_dateformat) + '_' + str(indexfilenumber) + logfileextension
-                if os.path.exists(logfile) and int('%2.0f' % (os.path.getsize(logfile) / 1024)) < int(maxlogfilesize):
-                    return logfile
-        else:
-            if not os.path.exists(logfilefolder):
-                os.mkdir(logfilefolder)
-            with open(logfile, "a") as f:
-                f.write('')
-            return logfile
-        return logfile
+    def __make_log_file(self):
+        try:
+            if not os.path.exists(self.folder):
+                os.mkdir(self.folder)
+        except OSError as folder_error:
+            print('CREATING FOLDER ERROR: ' + folder_error.strerror + ' --> ' + folder_error.filename)
+        try:
+            if not os.path.exists(self.logfile):
+                with open(self.logfile, "a") as f:
+                    f.write('')
+        except OSError as writing_error:
+            print('CREATING LOG FILE ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
+        return self.logfile
 
     def write(self, message):
-        self.checklogfile()
-        with open(logfile, "a") as f:
-            f.write('[ ' + datetime.today().strftime(logfile_timeformat) + ' ]  ' + '[ ' + os.path.basename(sys.argv[0]) + ' ]  ' + message + '\n')
+        logfile = self.__make_log_file()
+        
+        try:
+            with open(logfile, "a") as f:
+                f.write('[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' +
+                        '[ ' + os.path.basename(sys.argv[0]) + ' ]  ' + message + '\n')
+
+        except OSError as writing_error:
+            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
 
     def debug(self, message):
-        self.checklogfile()
-        debugmessage = '[ ' + datetime.today().strftime(logfile_timeformat) + ' ]  ' + '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  [ DEBUG ]  ' + message + '\n'
-        with open(logfile, "a") as f:
-            f.write(debugmessage)
+        logfile = self.__make_log_file()
+        
+        try:
+            debug_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
+                            '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  [ DEBUG ]  ' + message + '\n'
+            with open(logfile, "a") as f:
+                f.write(debug_message)
+
+        except OSError as writing_error:
+            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
 
     def error(self, message):
-        self.checklogfile()
-        errormessage = '[ ' + datetime.today().strftime(logfile_timeformat) + ' ]  ' + '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  [ ERROR ]  ' + message + '\n'
-        with open(logfile, "a") as f:
-            f.write(errormessage)
+        logfile = self.__make_log_file()
+        
+        try:
+            error_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
+                            '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  [ ERROR ]  ' + message + '\n'
+            with open(logfile, "a") as f:
+                f.write(error_message)
 
-    def crit(self, message):
-        self.checklogfile()
-        criticalmessage = '[ ' + datetime.today().strftime(logfile_timeformat) + ' ]  ' + '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  --> CRITICAL <--  ' + message + '\n'
-        with open(logfile, "a") as f:
-            f.write(criticalmessage)
+        except OSError as writing_error:
+            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
+
+    def critical(self, message):
+        logfile = self.__make_log_file()
+        
+        try:
+            critical_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
+                               '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  --> CRITICAL <--  ' + message + '\n'
+            with open(logfile, "a") as f:
+                f.write(critical_message)
+
+        except OSError as writing_error:
+            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
