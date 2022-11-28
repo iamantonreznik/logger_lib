@@ -14,9 +14,9 @@ mylogger = logger_lib.Logger('logs', 'log_')
 
 
 mylogger.write('Simple message')
-mylogger.debug('Message with DEBUG tag')
-mylogger.error('Message with ERROR tag')
-mylogger.critical('Message with CRITICAL tag')
+mylogger.debug('Message with [ DEBUG ] tag')
+mylogger.error('Message with [ ERROR ] tag')
+mylogger.critical('Message with --> CRITICAL <-- tag')
 ```
 
 ## Current version
