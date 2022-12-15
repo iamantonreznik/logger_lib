@@ -1,5 +1,4 @@
-# v0.2
-# 19.11.22
+# v0.3
 # dev version
 
 import os
