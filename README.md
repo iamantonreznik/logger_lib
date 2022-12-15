@@ -1,7 +1,8 @@
 # logger_lib
+## developer branch
 
 <b>Библиотека для логирования logger_lib
-v0.2</b>
+v0.3</b>
 
 <a href="https://github.com/iamantonreznik/logger_lib/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/iamantonreznik/logger_lib?style=for-the-badge"></a><br>
 # ОПИСАНИЕ
