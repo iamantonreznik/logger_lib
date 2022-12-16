@@ -6,6 +6,17 @@ import sys
 from datetime import datetime
 
 
+def exception_handler(function):
+    def inner_function(*args, **kwargs):
+        try:
+            function(*args, **kwargs)
+        except OSError as logger_error:
+            print('[' + os.path.basename(sys.argv[0]) + '] logger_lib writing error: '
+                  + logger_error.strerror + ' --> ' + logger_error.filename)
+
+    return inner_function
+
+
 class Logger:
 
     def __init__(self, folder, prefix):
@@ -15,63 +26,51 @@ class Logger:
             self.prefix = self.prefix + "_"
         self.logfile = os.path.join(self.folder, self.prefix + datetime.today().strftime("%d-%m-%Y") + ".log")
 
+    @exception_handler
     def __make_log_file(self):
-        try:
-            if not os.path.exists(self.folder):
-                os.mkdir(self.folder)
-        except OSError as folder_error:
-            print('CREATING FOLDER ERROR: ' + folder_error.strerror + ' --> ' + folder_error.filename)
-        try:
-            if not os.path.exists(self.logfile):
-                with open(self.logfile, "a") as f:
-                    f.write('')
-        except OSError as writing_error:
-            print('CREATING LOG FILE ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
-        return self.logfile
 
+        if not os.path.exists(self.folder):
+            os.mkdir(self.folder)
+        if not os.path.exists(self.logfile):
+            with open(self.logfile, "a") as f:
+                f.write('')
+
+        # return self.logfile
+
+    def __message_worker(self, level, message):
+        message_levels = {'info': '  [ INFO ]  ',
+                          'debug': '  [ DEBUG ]  ',
+                          'error': '  [ ERROR ]  ',
+                          'critical': '  --> CRITICAL <--  '}
+
+        log_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
+                      '[ ' + os.path.basename(sys.argv[0]) + ' ]' + message_levels[level] + message + '\n'
+        return log_message
+
+    @exception_handler
     def write(self, message):
-        logfile = self.__make_log_file()
-        
-        try:
-            with open(logfile, "a") as f:
-                f.write('[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' +
-                        '[ ' + os.path.basename(sys.argv[0]) + ' ]  ' + message + '\n')
+        self.__make_log_file()
 
-        except OSError as writing_error:
-            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
+        with open(self.logfile, "a") as f:
+            f.write(self.__message_worker('info', message))
 
+    @exception_handler
     def debug(self, message):
-        logfile = self.__make_log_file()
-        
-        try:
-            debug_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
-                            '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  [ DEBUG ]  ' + message + '\n'
-            with open(logfile, "a") as f:
-                f.write(debug_message)
+        self.__make_log_file()
 
-        except OSError as writing_error:
-            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
+        with open(self.logfile, "a") as f:
+            f.write(self.__message_worker('debug', message))
 
+    @exception_handler
     def error(self, message):
-        logfile = self.__make_log_file()
-        
-        try:
-            error_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
-                            '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  [ ERROR ]  ' + message + '\n'
-            with open(logfile, "a") as f:
-                f.write(error_message)
+        self.__make_log_file()
 
-        except OSError as writing_error:
-            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
+        with open(self.logfile, "a") as f:
+            f.write(self.__message_worker('error', message))
 
+    @exception_handler
     def critical(self, message):
-        logfile = self.__make_log_file()
-        
-        try:
-            critical_message = '[ ' + datetime.today().strftime('%H:%M:%S') + ' ]  ' + \
-                               '[ ' + os.path.basename(sys.argv[0]) + ' ]' + '  --> CRITICAL <--  ' + message + '\n'
-            with open(logfile, "a") as f:
-                f.write(critical_message)
+        self.__make_log_file()
 
-        except OSError as writing_error:
-            print('WRITING ERROR: ' + writing_error.strerror + ' --> ' + writing_error.filename)
+        with open(self.logfile, "a") as f:
+            f.write(self.__message_worker('critical', message))
