@@ -1,31 +1,25 @@
 # logger_lib
-## developer branch
+<img src="https://user-images.githubusercontent.com/112612414/203007923-089b7b0c-dab7-4648-8938-2de1daffd52d.png" width=50% height=50%>
 
-<b>Библиотека для логирования logger_lib
-v0.3</b>
+Simple logger library for small projects
+
+## Usage/Examples
+
+```python
+import logger_lib
+
+# 'logs' for logfiles folder
+# 'log_' for logfiles prefix
+mylogger = logger_lib.Logger('logs', 'log_')
+
+
+mylogger.write('Simple message')
+mylogger.debug('Message with [ DEBUG ] tag')
+mylogger.error('Message with [ ERROR ] tag')
+mylogger.critical('Message with --> CRITICAL <-- tag')
+```
+
+## Current version
+v0.3
 
 <a href="https://github.com/iamantonreznik/logger_lib/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/iamantonreznik/logger_lib?style=for-the-badge"></a><br>
-# ОПИСАНИЕ
-
-Библиотека для логирования проектов
-<br><br>
-# ПОДКЛЮЧЕНИЕ
-
-1. Подключить библиотеку к своему проекту с помощью `import logger_lib`
-2. Инициализировать библиотеку, передав в параметры **имя папки** для хранения логов и **префикс** для лог файлов, например,  так: `mylogger = logger_lib.Logger('logs', 'log_')`
-<br>
-
-# ИСПОЛЬЗОВАНИЕ
-
-<pre>
-mylogger.write('Простое событие')
-</pre>
-<pre>
-mylogger.debug('Событие с пометкой DEBUG')
-</pre>
-<pre>
-mylogger.error('Событие с пометкой ERROR')
-</pre>
-<pre>
-mylogger.critical('Событие с пометкой CRITICAL')
-</pre>
