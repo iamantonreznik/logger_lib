@@ -13,13 +13,14 @@ import logger_lib
 mylogger = logger_lib.Logger('logs', 'log_')
 
 
-mylogger.write('Simple message')
+mylogger.write('Simple message with [ INFO ] tag')
 mylogger.debug('Message with [ DEBUG ] tag')
 mylogger.error('Message with [ ERROR ] tag')
 mylogger.critical('Message with --> CRITICAL <-- tag')
 ```
 
 ## Current version
-v0.2
+v0.3
+
 
 <a href="https://github.com/iamantonreznik/logger_lib/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/iamantonreznik/logger_lib?style=for-the-badge"></a><br>
