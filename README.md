@@ -13,7 +13,7 @@ import logger_lib
 mylogger = logger_lib.Logger('logs', 'log_')
 
 
-mylogger.write('Simple message')
+mylogger.write('Simple message with [ INFO ] tag')
 mylogger.debug('Message with [ DEBUG ] tag')
 mylogger.error('Message with [ ERROR ] tag')
 mylogger.critical('Message with --> CRITICAL <-- tag')
