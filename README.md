@@ -22,4 +22,5 @@ mylogger.critical('Message with --> CRITICAL <-- tag')
 ## Current version
 v0.3
 
+
 <a href="https://github.com/iamantonreznik/logger_lib/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/iamantonreznik/logger_lib?style=for-the-badge"></a><br>
